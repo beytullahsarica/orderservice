@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-@RequestMapping(value="/api/v1/order", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/v1/order", produces = MediaType.APPLICATION_JSON_VALUE)
 public class OrderController {
 
     @Autowired
@@ -27,29 +27,30 @@ public class OrderController {
                     .status(ResponseStatus.SUCCESS)
                     .data(orderService.getOrder(id))
                     .build();
-            return new ResponseEntity<>(orderResponse,HttpStatus.OK);
+            return new ResponseEntity<>(orderResponse, HttpStatus.OK);
         } catch (OrderServiceException e) {
             OrderResponse orderResponse = OrderResponse.builder()
                     .status(ResponseStatus.ERROR)
                     .message(e.getMessage())
                     .build();
-            return new ResponseEntity<>(orderResponse,HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(orderResponse, HttpStatus.NOT_FOUND);
         }
     }
 
     @PostMapping
-    public OrderResponse createOrder(@RequestBody Order order) {
+    public ResponseEntity<OrderResponse> createOrder(@RequestBody Order order) {
         try {
-            Order newOrder = orderService.createOrder(order);
-            return OrderResponse.builder()
-                    .status(ResponseStatus.SUCCESS).data(newOrder)
+            OrderResponse orderResponse = OrderResponse.builder()
+                    .status(ResponseStatus.SUCCESS)
+                    .data(orderService.createOrder(order))
                     .build();
-        }
-        catch (OrderServiceException e) {
-            return OrderResponse.builder()
+            return new ResponseEntity<>(orderResponse, HttpStatus.OK);
+        } catch (OrderServiceException e) {
+            OrderResponse orderResponse = OrderResponse.builder()
                     .status(ResponseStatus.ERROR)
                     .message(e.getMessage())
                     .build();
+            return new ResponseEntity<>(orderResponse, HttpStatus.NOT_FOUND);
         }
     }
 }

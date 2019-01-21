@@ -28,7 +28,7 @@ public class OrderControllerTest {
 
 
     @Test
-    public void testOrderController() {
+    public void testOrderControllerGetOrder() {
         Order order = new Order();
         order.setProductId(111L);
         order.setQuantity(2);
@@ -45,9 +45,8 @@ public class OrderControllerTest {
     }
 
     @Test
-    public void testOrderControllerNullData() {
+    public void testOrderControllerGetOrderNullData() {
         Order order = new Order();
-        order.setProductId(111L);
         order.setQuantity(2);
 
         try {
@@ -61,7 +60,7 @@ public class OrderControllerTest {
     }
 
     @Test
-    public void testOrderControllerFail() {
+    public void testOrderControllerGetOrderFail() {
         try {
             given(orderService.getOrder(any(Long.class))).willThrow(OrderServiceException.class);
         } catch (OrderServiceException e) {
@@ -69,6 +68,34 @@ public class OrderControllerTest {
         }
 
         OrderResponse returnedOrder = orderController.getOrder(1L).getBody();
+        assertEquals(ResponseStatus.ERROR, returnedOrder.getStatus());
+    }
+
+    @Test
+    public void testOrderControllerCreateOrder() {
+        Order order = new Order();
+        order.setProductId(111L);
+        order.setQuantity(2);
+
+        try {
+            given(orderService.createOrder(any(Order.class))).willReturn(order);
+        } catch (OrderServiceException e) {
+            e.printStackTrace();
+        }
+
+        OrderResponse returnedOrder = orderController.createOrder(order).getBody();
+        assertEquals(returnedOrder.getData(), order);
+    }
+
+    @Test
+    public void testOrderControllerCreateOrderFail() {
+        try {
+            given(orderService.createOrder(any(Order.class))).willThrow(OrderServiceException.class);
+        } catch (OrderServiceException e) {
+            e.printStackTrace();
+        }
+
+        OrderResponse returnedOrder = orderController.createOrder(new Order()).getBody();
         assertEquals(ResponseStatus.ERROR, returnedOrder.getStatus());
     }
 }

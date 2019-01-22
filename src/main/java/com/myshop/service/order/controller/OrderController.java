@@ -37,7 +37,7 @@ public class OrderController {
         }
     }
 
-    @PostMapping
+    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<OrderResponse> createOrder(@RequestBody Order order) {
         try {
             OrderResponse orderResponse = OrderResponse.builder()
